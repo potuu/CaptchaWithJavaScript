@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Captcha</title>
+    <style>
+        #grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3 column grid */
+            gap: 10px; /* Inter-grid space */
+            margin-top: 20px;
+            max-width: 400px; /* Maximum width of grid */
+        }
+        img {
+            width: 100%;
+            height: auto;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        img.selected {
+            border: 2px solid green;
+        }
+    </style>
+</head>
+<body>
+    <button onclick="startGame()">Oyunu Başlat</button>
+    <h2 id="prompt"></h2>
+    <div id="grid"></div>
+    <button id="confirmButton" onclick="confirmSelection()" style="display:none;">Onayla</button>
+
+    <script>
+        const birdImages = Array.from({length: 400}, (_, i) => `images/bird/bird${i + 1}.jpg`);
+        const droneImages = Array.from({length: 400}, (_, i) => `images/drone/drone${i + 1}.jpg`);
+        const otherImages = Array.from({length: 400}, (_, i) => `images/other/other${i + 1}.jpg`);
+        const folders = ['bird', 'drone'];
+
+        function getRandomImages(images, count) {
+            const shuffled = images.sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, count);
+        }
+
+        function startGame() {
+            const selectedFolder = folders[Math.floor(Math.random() * folders.length)];
+            document.getElementById('prompt').innerText = `${selectedFolder.charAt(0).toUpperCase() + selectedFolder.slice(1)} choose the photos`;
+            
+            const selectedImages = getRandomImages(selectedFolder === 'bird' ? birdImages : droneImages, 3);
+            const otherFolder = selectedFolder === 'bird' ? 'drone' : 'bird';
+            const otherImagesSelected = getRandomImages(otherFolder === 'bird' ? birdImages : droneImages, 3);
+            const otherImagesFinal = getRandomImages(otherImages, 3);
+
+            const allImages = [...selectedImages, ...otherImagesSelected, ...otherImagesFinal];
+            shuffleArray(allImages);
+
+            const grid = document.getElementById('grid');
+            grid.innerHTML = '';
+
+            // Create an array to store folder information
+            window.imageDetails = [];
+
+            allImages.forEach(imgSrc => {
+                const img = document.createElement('img');
+                img.src = imgSrc;
+                img.onclick = () => toggleSelection(img);
+                
+                window.imageDetails.push(imgSrc);
+                grid.appendChild(img);
+            });
+
+            document.getElementById('confirmButton').style.display = 'block';
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        const selectedImages = new Set();
+
+        function toggleSelection(img) {
+            img.classList.toggle('selected');
+            const imgSrc = img.src;
+            if (selectedImages.has(imgSrc)) {
+                selectedImages.delete(imgSrc);
+            } else {
+                selectedImages.add(imgSrc);
+            }
+        }
+
+        function confirmSelection() {
+            const selectedFolder = document.getElementById('prompt').innerText.split(' ')[0].toLowerCase();
+
+            // Check photos that user picked
+            const userSelectedImages = Array.from(selectedImages);
+
+            // Checking for correct name
+            const isCorrect = userSelectedImages.length === 3 &&
+                userSelectedImages.every(img => {
+                    const imgName = img.split('/').pop(); // Get the filename from the last part
+                    return selectedFolder === 'bird' ? imgName.startsWith('bird') : imgName.startsWith('drone');
+                });
+
+            if (isCorrect) {
+                alert('Correct Guess!');
+            } else {
+                alert('Wrong Guess!');
+            }
+
+            // Cleaning
+            selectedImages.clear();
+            document.getElementById('grid').innerHTML = '';
+            document.getElementById('confirmButton').style.display = 'none';
+            document.getElementById('prompt').innerText = '';
+        }
+    </script>
+</body>
+</html>
