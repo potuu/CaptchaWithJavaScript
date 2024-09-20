@@ -50,12 +50,12 @@ You also can play a matching game with this application.
      ```
 
 2. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/yourusername/photo-captcha-verification.git
+   ```
+   git clone https://github.com/potuu/CaptchaWithJavaScript.git
 Navigate to the Project Directory:
 
 ```
-cd photo-captcha-verification
+cd CaptchaWithJavaScript
 ```
 Open the Application:
 
@@ -65,6 +65,34 @@ Click the "Start Verification" button to begin.
 Follow the prompt to select images from the specified category (either birds or drones).
 Click on the images to select them, and then click the "Confirm" button.
 Receive immediate feedback regarding your selections.
+
+
+**Usage with Docker**
+
+Pulling a Docker Image
+To pull a Docker image from a repository, you can use the following command:
+
+```
+docker pull potuu/CaptchaWithJavaScript
+```
+Explanation:
+CaptchaWithJavaScript is the name of the Docker image you want to pull.
+Running a Docker Container
+Once you have pulled the image, you can run a container using the following command:
+
+```
+docker run -p 8080:80 <username>/captcha-web
+```
+Explanation:
+-p 8080:80 maps port 80 of the container to port 8080 on your host machine. This allows you to access the application running inside the container through your browser.
+potuu/CaptchaWithJavaScript is the name of the image you just pulled.
+
+Environment:
+Ensure that your project is set up in Docker Desktop. This allows you to manage your containers and images easily.
+
+Accessing the Application:
+After running the above command, you can access your application by navigating to http://localhost:8080 in your web browser. This URL points to the mapped port on your local machine.
+
 Contributing
 Contributions are welcome! To contribute to the project:
 
